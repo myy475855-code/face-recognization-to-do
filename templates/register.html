@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Register — Scan To-Do{% endblock %}
+{% block body %}
+<div class="center-screen">
+  <div class="card">
+    <div class="brand"><span class="dot"></span><h1>SCAN // TO-DO</h1></div>
+    <p class="subtitle">Create an account and register your face as your key.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ 'error' if category == 'error' else 'success' }}">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form id="registerForm" method="POST" action="{{ url_for('register') }}">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password (backup sign-in)</label>
+        <input type="password" id="password" name="password" autocomplete="new-password" required>
+      </div>
+
+      <div class="field">
+        <label>Face capture</label>
+        <div class="viewfinder" id="viewfinder">
+          <div class="placeholder" id="placeholder">Requesting camera access…</div>
+          <video id="video" autoplay muted playsinline></video>
+          <canvas id="canvas" style="display:none;"></canvas>
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+          <div class="scanline"></div>
+        </div>
+        <div class="status-line" id="statusLine"></div>
+        <button type="button" class="btn secondary" id="captureBtn">Capture face</button>
+        <button type="button" class="btn secondary" id="retakeBtn" style="display:none;">Retake</button>
+      </div>
+
+      <input type="hidden" id="image_data" name="image_data">
+      <button type="submit" class="btn" id="submitBtn" disabled style="margin-top: 6px;">Create account</button>
+    </form>
+
+    <div class="footnote">Already registered? <a href="{{ url_for('login') }}">Sign in with your face</a></div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script src="{{ url_for('static', filename='js/register.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Scan To-Do{% endblock %}
+{% block body %}
+<div class="app-shell">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span><h1>SCAN // TO-DO</h1></div>
+    <div class="session-pill">
+      <span class="dot"></span>
+      {{ username }} · <a href="{{ url_for('logout') }}" class="mono">sign out</a>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="flash {{ 'error' if category == 'error' else 'success' }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+
+  <form class="task-form" method="POST" action="{{ url_for('add_task') }}">
+    <input type="text" name="task" placeholder="Add a task…" required autofocus>
+    <button type="submit" class="btn small">Add</button>
+  </form>
+
+  <div class="task-list">
+    {% for t in tasks %}
+      <div class="task-row">
+        <form method="POST" action="{{ url_for('toggle_task', task_id=t.id) }}">
+          <button type="submit" class="check-btn {{ 'done' if t.completed }}" aria-label="Toggle complete"></button>
+        </form>
+        <span class="task-text {{ 'done' if t.completed }}">{{ t.task }}</span>
+        <span class="task-meta">{{ t.created_at.strftime('%b %d, %H:%M') }}</span>
+        <form method="POST" action="{{ url_for('delete_task', task_id=t.id) }}">
+          <button type="submit" class="btn danger-outline small">Delete</button>
+        </form>
+      </div>
+    {% else %}
+      <div class="empty-state">No tasks yet — add your first one above.</div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
